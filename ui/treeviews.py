@@ -147,17 +147,20 @@ class TreeViews(Gtk.TreeView):
             self.textviews.update_graph(widget, link_name)
 
     def fcn_tooltip(self, widget, event):
-        x = int(event.x)
-        y = int(event.y)
-        tup = widget.get_path_at_pos(x, y)
-        if "Function" == tup[1].get_title():
-            model = widget.get_model()
-            tree_iter = model.get_iter(tup[0])
-            fcn = model.get_value(tree_iter, 1)
-            value = self.uicore.send_cmd_str('pdi 15 @ ' + fcn)
-            widget.set_tooltip_markup("<span font_family=\"monospace\">" + value.rstrip() + "</span>")
-        else:
-            widget.set_tooltip_markup("")
+        try:
+          x = int(event.x)
+          y = int(event.y)
+          tup = widget.get_path_at_pos(x, y)
+          if "Function" == tup[1].get_title():
+              model = widget.get_model()
+              tree_iter = model.get_iter(tup[0])
+              fcn = model.get_value(tree_iter, 1)
+              value = self.uicore.send_cmd_str('pdi 15 @ ' + fcn)
+              widget.set_tooltip_markup("<span font_family=\"monospace\">" + value.rstrip() + "</span>")
+          else:
+              widget.set_tooltip_markup("")
+        except:
+          widget.set_tooltip_markup("")
 
     def popup_menu(self, tv, event, row=None):
         '''Controls the behavior of the treeviews on the left:

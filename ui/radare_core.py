@@ -22,6 +22,8 @@ import lib.backend
 import os
 import re
 import tempfile
+import json
+import ctypes
 
 from r2.r_core import *
 from r2.r_bin import *
@@ -104,12 +106,13 @@ class Core(lib.backend.BasicBackend):
     def load_file(self, filename):
         self.update_progress_bar("Loading file", 0.1)
         self.filename = filename
-        open_result = self.core.file_open(filename, 0, 0)
+        open_result = self.core.file_open(filename, False, 0)
         if open_result is None:
             self.file_loaded = False
             return
         self.file_loaded = True
-        self.core.bin_load(None, 0)
+        #self.core.bin_load(None, 0)
+        self.core.bin_load(None, ctypes.c_ulonglong(-1).value)
         self.send_cmd("e scr.interactive=false")
         self.send_cmd('e asm.lines=false')
         self.send_cmd('e scr.color=0')
@@ -467,7 +470,11 @@ class Core(lib.backend.BasicBackend):
                 self.full_fileinfo['eps'] = []
                 for line in entryp.split('\n'):
                     line = line.strip('[').strip(']')
-                    self.full_fileinfo['eps'].append(['Entry0', hex(int(line))])
+                    if line!="":
+                        # FIXME: this should not be virtual address, but absolute address!
+                        decLine = json.loads(line)
+                        vAddr = int(decLine["vaddr"])
+                        self.full_fileinfo['eps'].append(['Entry0', hex(vAddr)])
             # Get symbols
             symbols = self.send_cmd_str('is')
             if symbols:

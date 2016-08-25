@@ -209,7 +209,7 @@ class BokkenGTKClient:
     # Do all the core stuff of parsing file
     def load_file(self, target):
 
-        #print "Loading file: %s..." % (target)
+        #print "Loading file: '%s'..." % (target)
         self.uicore.load_file(target)
         if not self.uicore.file_loaded:
             return

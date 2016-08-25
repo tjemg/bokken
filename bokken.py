@@ -61,6 +61,8 @@ def bokken():
         glob.http_server_bind_address = args.bind_address
 
     import ui.main as main
+    if args.file_to_load is None:
+        args.file_to_load = ""
     main.main(args.file_to_load,
               'radare' if args.radare else '',
               )
